@@ -80,6 +80,7 @@
 </template>
 <script>
 import axios from 'axios'
+import Settings from '../../../constants/Settings.js'
 export default {
   data() {
     return {
@@ -100,13 +101,13 @@ export default {
     let url = ''
     if (this.ownerId.startsWith('user_id')) {
       url =
-        'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/users/'
+        Settings.api_url + 'users/'
     } else if (this.ownerId.startsWith('group_id')) {
       url =
-        'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/groups/'
+        Settings.api_url + 'groups/'
     } else if (this.ownerId.startsWith('publisher_id')) {
       url =
-        'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/publishers/'
+        Settings.api_url + 'publishers/'
     }
     url += this.ownerId + '/copyrights'
     axios.get(url).then(response => {
@@ -119,7 +120,7 @@ export default {
       for (const creativeWork of this.creativeWorkIds) {
         axios
           .get(
-            'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/creative_works/' +
+            Settings.api_url + 'creative_works/' +
               creativeWork
           )
           .then(response => {
@@ -151,11 +152,11 @@ export default {
       if (creative_work_ids !== '') {
         axios
           .post(
-            'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/orchard',
+            Settings.api_url + 'orchard',
             {"creative_work_ids" : creative_work_ids}
           )
           .then(response => {
-            window.open('https://bc-secure-storage-api-cuongnn-bucket83908e77-nczm2ffo15wh.s3.ap-northeast-1.amazonaws.com/' + response.data.s3_key)
+            window.open(Settings.aws_url + response.data.s3_key)
           })
           .catch(error => {
             if (error.response !== undefined) {

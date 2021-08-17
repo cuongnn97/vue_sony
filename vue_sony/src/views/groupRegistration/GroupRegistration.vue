@@ -43,6 +43,7 @@
 <script>
 import Header from '../Header'
 import Footer from '../Footer'
+import Settings from '../../constants/Settings.js'
 import axios from 'axios'
 export default {
   data() {
@@ -58,7 +59,7 @@ export default {
     createGroups() {
       axios
         .post(
-          'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/groups',
+          Settings.api_url + 'groups',
           JSON.stringify(this.formElements)
         )
         .then(response => {

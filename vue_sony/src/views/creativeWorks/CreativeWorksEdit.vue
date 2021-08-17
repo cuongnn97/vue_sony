@@ -109,10 +109,7 @@
               type="file"
             />
             <img
-              :src="
-                'https://bc-secure-storage-api-cuongnn-bucket83908e77-nczm2ffo15wh.s3.ap-northeast-1.amazonaws.com/' +
-                  creativeWorkFromDb.art_work_file_path
-              "
+              :src= "aws_url + creativeWorkFromDb.art_work_file_path"
               alt="a"
             />
           </div>
@@ -155,6 +152,8 @@
 <script>
 import Header from '../Header'
 import Footer from '../Footer'
+import Categories from '../../constants/Categories.js'
+import Settings from '../../constants/Settings.js'
 import axios from 'axios'
 export default {
   data() {
@@ -178,15 +177,16 @@ export default {
       groups: [],
       creativeWorkFromDb: [],
       pickedSubgenres: [],
-      genres: this.$store.state.genres,
-      subGenres: this.$store.state.subGenres,
-      copyrightCategories: this.$store.state.copyrightCategories
+      genres: Categories.GENRES,
+      subGenres: Categories.SUBGENRES,
+      copyrightCategories: Categories.COPYRIGHTCATEGORIES,
+      aws_url: Settings.aws_url
     }
   },
   created() {
     axios
       .get(
-        'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/creative_works/' +
+        Settings.api_url + 'creative_works/' +
           this.$route.query.creative_work_id
       )
       .then(response => {
@@ -235,7 +235,7 @@ export default {
       })
     axios
       .get(
-        'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups'
+        Settings.api_url + 'users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups'
       )
       .then(response => {
         this.groups = response.data
@@ -266,7 +266,7 @@ export default {
       )
       axios
         .patch(
-          'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/creative_works/' +
+          Settings.api_url + 'creative_works/' +
             this.$route.query.creative_work_id,
           JSON.stringify(this.formElements)
         )

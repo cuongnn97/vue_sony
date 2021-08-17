@@ -175,6 +175,8 @@
 <script>
 import Header from '../Header'
 import Footer from '../Footer'
+import Categories from '../../constants/Categories.js'
+import Settings from '../../constants/Settings.js'
 import axios from 'axios'
 import AWS from 'aws-sdk'
 export default {
@@ -201,9 +203,9 @@ export default {
       creative_work_file: null,
       creative_work_art_work_file: null,
       errorMessage: '',
-      genres: this.$store.state.genres,
-      subGenres: this.$store.state.subGenres,
-      copyrightCategories: this.$store.state.copyrightCategories
+      genres: Categories.GENRES,
+      subGenres: Categories.SUBGENRES,
+      copyrightCategories: Categories.COPYRIGHTCATEGORIES
     }
   },
   created() {
@@ -214,7 +216,7 @@ export default {
     }
     axios
       .get(
-        'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups'
+        Settings.api_url + 'users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups'
       )
       .then(response => {
         this.groups = response.data
@@ -322,7 +324,7 @@ export default {
       console.log(JSON.stringify(this.formElements))
       axios
         .post(
-          'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/creative_works',
+          Settings.api_url + 'creative_works',
           JSON.stringify(this.formElements)
         )
         .then(response => {

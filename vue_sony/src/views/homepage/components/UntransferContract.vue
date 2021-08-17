@@ -40,6 +40,7 @@
 </template>
 <script>
 import axios from 'axios'
+import Settings from '../../../constants/Settings.js'
 export default {
   data() {
     return {
@@ -49,14 +50,14 @@ export default {
   created() {
     axios
       .get(
-        'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/contracts'
+        Settings.api_url + 'users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/contracts'
       )
       .then(response => {
         this.ownedCopyrights = response.data
         for (const ownedCopyright of this.ownedCopyrights) {
           axios
             .get(
-              'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/creative_works/' +
+              Settings.api_url + 'creative_works/' +
                 ownedCopyright.creative_work_id
             )
             .then(response => {

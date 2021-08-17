@@ -52,6 +52,7 @@
 <script>
 import Header from '../Header'
 import Footer from '../Footer'
+import Settings from '../../constants/Settings.js'
 import axios from 'axios'
 export default {
   data() {
@@ -68,7 +69,7 @@ export default {
     createPublisher() {
       axios
         .post(
-          'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/publishers',
+          Settings.api_url + 'publishers',
           JSON.stringify(this.formElements)
         )
         .then(response => {

@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "build-development": "NODE_ENV=development vue-cli-service build",
+    "build-staging": "NODE_ENV=staging vue-cli-service build",
+    "build-production": "NODE_ENV=production vue-cli-service build"
   },
   "dependencies": {
     "aws-sdk": "^2.969.0",

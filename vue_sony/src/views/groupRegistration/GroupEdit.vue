@@ -43,6 +43,7 @@
 <script>
 import Header from '../Header'
 import Footer from '../Footer'
+import Settings from '../../constants/Settings.js'
 import axios from 'axios'
 export default {
   data() {
@@ -57,7 +58,7 @@ export default {
   created() {
     axios
       .get(
-        'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/groups/' +
+        Settings.api_url + 'groups/' +
           this.$route.query.group_id
       )
       .then(response => {
@@ -70,7 +71,7 @@ export default {
       this.formElements.group_name_kana = this.groupFromDb.name_kana
       axios
         .patch(
-          'https://9gfglk4kul.execute-api.ap-northeast-1.amazonaws.com/prod/v1/groups/' +
+          Settings.api_url + 'groups/' +
             this.$route.query.group_id,
           JSON.stringify(this.formElements)
         )
