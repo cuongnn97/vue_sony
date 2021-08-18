@@ -254,41 +254,24 @@ export default {
       this.coAuthors.splice(i, 1);
     },
     uploadFile(file, type) {
-      var fileName = file.name;
-      var albumPhotosKey = "creative_works/";
-
-      var photoKey = albumPhotosKey + fileName;
-
-      // AWS.config.region = "ap-northeast-1";
-      // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      //   IdentityPoolId: "ap-northeast-1:f9f79180-8602-4034-a400-8db839a07c45",
-      // });
-      // var upload = new AWS.S3.ManagedUpload({
-      //   params: {
-      //     Bucket: "bc-secure-storage-api-cuongnn-bucket83908e77-nczm2ffo15wh",
-      //     Key: photoKey,
-      //     Body: file,
-      //   },
-      // });
-      var upload = S3Api.upload
-      console.log(upload)
-      // upload
-      //   .promise()
-      //   .then((data) => {
-      //     if (type == "creative_work_file") {
-      //       this.formElements.creative_work_file = this.formatkey(
-      //         data.Location.replaceAll("https://", "")
-      //       );
-      //       this.createCreativeWorks();
-      //     } else if (type == "creative_work_art_work_file") {
-      //       this.formElements.creative_work_art_work_file = this.formatkey(
-      //         data.Location.replaceAll("https://", "")
-      //       );
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      var upload = new S3Api(file);
+      upload
+        .promise()
+        .then((data) => {
+          if (type == "creative_work_file") {
+            this.formElements.creative_work_file = this.formatkey(
+              data.Location.replaceAll("https://", "")
+            );
+            this.createCreativeWorks();
+          } else if (type == "creative_work_art_work_file") {
+            this.formElements.creative_work_art_work_file = this.formatkey(
+              data.Location.replaceAll("https://", "")
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     register() {
       this.formElements.creator_ids.length = 1;
@@ -318,15 +301,13 @@ export default {
       return getString;
     },
     async createCreativeWorks() {
-      await SercueStorageApi
-        .request("post", "creative_works/", {
-          data: JSON.stringify(this.formElements),
-        })
-        .catch((error) => {
-          if (error.response !== undefined) {
-            this.errorMessage = error.response.data.message;
-          }
-        });
+      await SercueStorageApi.request("post", "creative_works/", {
+        data: JSON.stringify(this.formElements),
+      }).catch((error) => {
+        if (error.response !== undefined) {
+          this.errorMessage = error.response.data.message;
+        }
+      });
       window.location.href = "/";
     },
   },
