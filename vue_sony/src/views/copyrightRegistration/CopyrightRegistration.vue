@@ -179,7 +179,7 @@ import Categories from "../../constants/Categories.js";
 import Settings from "../../settings/index.js";
 import DateUtility from "../../utils/DateUtility.js";
 import SercueStorageApi from "../../sercueStorageApi/index.js";
-import AWS from "aws-sdk";
+import S3Api from "../../s3Api/index.js";
 export default {
   data() {
     return {
@@ -259,34 +259,36 @@ export default {
 
       var photoKey = albumPhotosKey + fileName;
 
-      AWS.config.region = "ap-northeast-1";
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: "ap-northeast-1:f9f79180-8602-4034-a400-8db839a07c45",
-      });
-      var upload = new AWS.S3.ManagedUpload({
-        params: {
-          Bucket: "bc-secure-storage-api-cuongnn-bucket83908e77-nczm2ffo15wh",
-          Key: photoKey,
-          Body: file,
-        },
-      });
-      upload
-        .promise()
-        .then((data) => {
-          if (type == "creative_work_file") {
-            this.formElements.creative_work_file = this.formatkey(
-              data.Location.replaceAll("https://", "")
-            );
-            this.createCreativeWorks();
-          } else if (type == "creative_work_art_work_file") {
-            this.formElements.creative_work_art_work_file = this.formatkey(
-              data.Location.replaceAll("https://", "")
-            );
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // AWS.config.region = "ap-northeast-1";
+      // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      //   IdentityPoolId: "ap-northeast-1:f9f79180-8602-4034-a400-8db839a07c45",
+      // });
+      // var upload = new AWS.S3.ManagedUpload({
+      //   params: {
+      //     Bucket: "bc-secure-storage-api-cuongnn-bucket83908e77-nczm2ffo15wh",
+      //     Key: photoKey,
+      //     Body: file,
+      //   },
+      // });
+      var upload = S3Api.upload
+      console.log(upload)
+      // upload
+      //   .promise()
+      //   .then((data) => {
+      //     if (type == "creative_work_file") {
+      //       this.formElements.creative_work_file = this.formatkey(
+      //         data.Location.replaceAll("https://", "")
+      //       );
+      //       this.createCreativeWorks();
+      //     } else if (type == "creative_work_art_work_file") {
+      //       this.formElements.creative_work_art_work_file = this.formatkey(
+      //         data.Location.replaceAll("https://", "")
+      //       );
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     },
     register() {
       this.formElements.creator_ids.length = 1;
