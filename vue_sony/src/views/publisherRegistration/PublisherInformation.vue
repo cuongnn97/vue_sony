@@ -49,10 +49,9 @@
 <script>
 import Header from "../Header";
 import Footer from "../Footer";
-import Settings from "../../constants/Settings.js";
-import SercueStorageApi from "../../constants/SercueStorageApi.js";
+import Settings from "../../settings/index.js";
+import SercueStorageApi from "../../sercueStorageApi/index.js";
 import axios from "axios";
-const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -60,9 +59,9 @@ export default {
     };
   },
   async created() {
-    const publishers = await api.request(
+    const publishers = await SercueStorageApi.request(
       "get",
-      "publishers/" + this.$route.query.publisher_id
+      `publishers/${this.$route.query.publisher_id}`,
     );
     this.publisherFromDb = publishers.data;
   },

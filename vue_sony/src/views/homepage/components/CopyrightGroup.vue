@@ -30,9 +30,8 @@
 <script>
 import axios from "axios";
 import CopyrightList from "./CopyrightList";
-import Settings from "../../../constants/Settings.js";
-import SercueStorageApi from "../../../constants/SercueStorageApi.js";
-const api = new SercueStorageApi(Settings.api_url);
+import Settings from "../../../settings/index.js";
+import SercueStorageApi from "../../../sercueStorageApi/index.js";
 export default {
   data() {
     return {
@@ -42,7 +41,7 @@ export default {
     };
   },
   async created() {
-    const groups = await api.request(
+    const groups = await SercueStorageApi.request(
       "get",
       "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
     );

@@ -43,10 +43,9 @@
 <script>
 import Header from "../Header";
 import Footer from "../Footer";
-import Settings from "../../constants/Settings.js";
-import SercueStorageApi from "../../constants/SercueStorageApi.js";
+import Settings from "../../settings/index.js";
+import SercueStorageApi from "../../sercueStorageApi/index.js";
 import axios from "axios";
-const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -59,7 +58,7 @@ export default {
   },
   methods: {
     async createGroups() {
-      await api.request("post", "groups/", {
+      await SercueStorageApi.request("post", "groups/", {
         data: JSON.stringify(this.formElements),
       });
       window.location.href = "/";

@@ -176,12 +176,11 @@
 import Header from "../Header";
 import Footer from "../Footer";
 import Categories from "../../constants/Categories.js";
-import Settings from "../../constants/Settings.js";
-import DateUtility from "../../constants/DateUtility.js";
-import SercueStorageApi from "../../constants/SercueStorageApi.js";
+import Settings from "../../settings/index.js";
+import DateUtility from "../../utils/DateUtility.js";
+import SercueStorageApi from "../../sercueStorageApi/index.js";
 import axios from "axios";
 import AWS from "aws-sdk";
-const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -217,7 +216,7 @@ export default {
         this.copyrightCategories[i].id
       );
     }
-    const groups = await api.request(
+    const groups = await SercueStorageApi.request(
       "get",
       "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
     );
@@ -318,7 +317,7 @@ export default {
       return getString;
     },
     async createCreativeWorks() {
-      await api
+      await SercueStorageApi
         .request("post", "creative_works/", {
           data: JSON.stringify(this.formElements),
         })

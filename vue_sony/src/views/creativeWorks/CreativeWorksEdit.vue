@@ -150,11 +150,10 @@
 import Header from "../Header";
 import Footer from "../Footer";
 import Categories from "../../constants/Categories.js";
-import Settings from "../../constants/Settings.js";
-import DateUtility from "../../constants/DateUtility.js";
-import SercueStorageApi from "../../constants/SercueStorageApi.js";
+import Settings from "../../settings/index.js";
+import DateUtility from "../../utils/DateUtility.js";
+import SercueStorageApi from "../../sercueStorageApi/index.js";
 import axios from "axios";
-const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -185,9 +184,9 @@ export default {
     };
   },
   async created() {
-    const creative_work = await api.request(
+    const creative_work = await SercueStorageApi.request(
       "get",
-      "creative_works/" + this.$route.query.creative_work_id
+      `creative_works/${this.$route.query.creative_work_id}`
     );
     this.creativeWorkFromDb = creative_work.data;
     this.imageSrc =
@@ -210,7 +209,7 @@ export default {
         this.creativeWorkFromDb.sale_start_date
       );
     }
-    const groups = await api.request(
+    const groups = await SercueStorageApi.request(
       "get",
       "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
     );
@@ -237,9 +236,9 @@ export default {
       this.formElements.sale_start_date = DateUtility.DateToString(
         this.formElements.sale_start_date
       );
-      await api.request(
+      await SercueStorageApi.request(
         "patch",
-        "creative_works/" + this.$route.query.creative_work_id,
+        `creative_works/${this.$route.query.creative_work_id}`,
         {
           data: JSON.stringify(this.formElements),
         }

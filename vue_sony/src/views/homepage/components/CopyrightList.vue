@@ -80,9 +80,8 @@
 </template>
 <script>
 import axios from "axios";
-import Settings from "../../../constants/Settings.js";
-import SercueStorageApi from "../../../constants/SercueStorageApi.js";
-const api = new SercueStorageApi(Settings.api_url);
+import Settings from "../../../settings/index.js";
+import SercueStorageApi from "../../../sercueStorageApi/index.js";
 export default {
   data() {
     return {
@@ -102,19 +101,19 @@ export default {
   async created() {
     let copyrightsData = null;
     if (this.ownerId.startsWith("user_id")) {
-      copyrightsData = await api.request(
+      copyrightsData = await SercueStorageApi.request(
         "get",
-        "users/" + this.ownerId + "/copyrights"
+        `users/${this.ownerId}/copyrights`
       );
     } else if (this.ownerId.startsWith("group_id")) {
-      copyrightsData = await api.request(
+      copyrightsData = await SercueStorageApi.request(
         "get",
-        "groups/" + this.ownerId + "/copyrights"
+        `groups/${this.ownerId}/copyrights`
       );
     } else if (this.ownerId.startsWith("publisher_id")) {
-      copyrightsData = await api.request(
+      copyrightsData = await SercueStorageApi.request(
         "get",
-        "publishers/" + this.ownerId + "/copyrights"
+        `publishers/${this.ownerId}/copyrights`
       );
     }
     for (const copyright of copyrightsData.data) {
@@ -123,9 +122,9 @@ export default {
       }
     }
     for (const creativeWork of this.creativeWorkIds) {
-      const copyrights = await api.request(
+      const copyrights = await SercueStorageApi.request(
         "get",
-        "creative_works/" + creativeWork
+        `creative_works/${creativeWork}`
       );
       this.ownedCopyrights.push(copyrights.data);
     }

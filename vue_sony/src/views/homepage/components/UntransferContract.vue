@@ -40,9 +40,8 @@
 </template>
 <script>
 import axios from "axios";
-import Settings from "../../../constants/Settings.js";
-import SercueStorageApi from "../../../constants/SercueStorageApi.js";
-const api = new SercueStorageApi(Settings.api_url);
+import Settings from "../../../settings/index.js";
+import SercueStorageApi from "../../../sercueStorageApi/index.js";
 export default {
   data() {
     return {
@@ -50,15 +49,15 @@ export default {
     };
   },
   async created() {
-    const copyrights = await api.request(
+    const copyrights = await SercueStorageApi.request(
       "get",
       "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/contracts"
     );
     this.ownedCopyrights = copyrights.data;
     for (const ownedCopyright of this.ownedCopyrights) {
-      const copyrights = await api.request(
+      const copyrights = await SercueStorageApi.request(
         "get",
-        "creative_works/" + ownedCopyright.creative_work_id
+        `creative_works/${ownedCopyright.creative_work_id}`
       );
       ownedCopyright.creative_work_name = copyrights.data.name;
     }

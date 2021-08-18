@@ -52,7 +52,8 @@
 <script>
 import Header from "../Header";
 import Footer from "../Footer";
-import Settings from "../../constants/Settings.js";
+import Settings from "../../settings/index.js";
+import SercueStorageApi from "../../sercueStorageApi/index.js";
 import axios from "axios";
 export default {
   data() {
@@ -67,7 +68,7 @@ export default {
   },
   methods: {
     async createPublisher() {
-      await api.request("post", "publishers/", {
+      await SercueStorageApi.request("post", "publishers/", {
         data: JSON.stringify(this.formElements),
       });
       window.location.href = "/";

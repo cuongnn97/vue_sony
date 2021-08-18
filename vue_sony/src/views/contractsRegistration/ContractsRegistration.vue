@@ -147,11 +147,10 @@
 import Header from "../Header";
 import Footer from "../Footer";
 import Categories from "../../constants/Categories.js";
-import Settings from "../../constants/Settings.js";
-import DateUtility from "../../constants/DateUtility.js";
-import SercueStorageApi from "../../constants/SercueStorageApi.js";
+import Settings from "../../settings/index.js";
+import DateUtility from "../../utils/DateUtility.js";
+import SercueStorageApi from "../../sercueStorageApi/index.js";
 import axios from "axios";
-const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -179,16 +178,16 @@ export default {
     };
   },
   async created() {
-    const creative_work = await api.request(
+    const creative_work = await SercueStorageApi.request(
       "get",
-      "creative_works/" + this.$route.query.creative_work_id
+      `creative_works/${this.$route.query.creative_work_id}`
     );
     this.creativeWorkFromDb = creative_work.data;
     this.imageSrc =
       Settings.aws_url + this.creativeWorkFromDb.art_work_file_path;
-    const user = await api.request(
+    const user = await SercueStorageApi.request(
       "get",
-      "users/" + this.creativeWorkFromDb.creator_ids
+      `users/${this.creativeWorkFromDb.creator_ids}`
     );
     this.creativeWorkFromDb.user_name = user.data.name;
     this.creativeWorkFromDb.release_date = DateUtility.StringToDate(
@@ -222,7 +221,7 @@ export default {
       this.formElements.end_date = DateUtility.DateToString(
         this.formElements.end_date
       );
-      await api
+      await SercueStorageApi
         .request("post", "contracts/", {
           data: JSON.stringify(this.formElements),
         })

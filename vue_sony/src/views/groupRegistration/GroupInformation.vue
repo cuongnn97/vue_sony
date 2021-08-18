@@ -57,10 +57,9 @@
 <script>
 import Header from "../Header";
 import Footer from "../Footer";
-import Settings from "../../constants/Settings.js";
-import SercueStorageApi from "../../constants/SercueStorageApi.js";
+import Settings from "../../settings/index.js";
+import SercueStorageApi from "../../sercueStorageApi/index.js";
 import axios from "axios";
-const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -72,9 +71,9 @@ export default {
     };
   },
   async created() {
-    const groups = await api.request(
+    const groups = await SercueStorageApi.request(
       "get",
-      "groups/" + this.$route.query.group_id
+      `groups/${this.$route.query.group_id}`
     );
     this.groupFromDb = groups.data;
   },

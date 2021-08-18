@@ -1,5 +1,6 @@
 import axios from "axios";
-export default class SercueStorageApi {
+import Settings from "../settings/index.js"
+class SercueStorageApi {
   constructor(baseUrl) {
     this.api = axios.create({
       baseURL: baseUrl,
@@ -16,3 +17,8 @@ export default class SercueStorageApi {
     });
   };
 }
+
+const api = new SercueStorageApi(Settings.api_url);
+
+export default api
+
