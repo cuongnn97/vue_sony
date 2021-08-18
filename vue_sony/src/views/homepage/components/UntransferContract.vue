@@ -41,6 +41,8 @@
 <script>
 import axios from "axios";
 import Settings from "../../../constants/Settings.js";
+import SercueStorageApi from "../../../constants/SercueStorageApi.js";
+const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -48,14 +50,15 @@ export default {
     };
   },
   async created() {
-    const copyrights = await axios.get(
-      Settings.api_url +
-        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/contracts"
+    const copyrights = await api.request(
+      "get",
+      "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/contracts"
     );
     this.ownedCopyrights = copyrights.data;
     for (const ownedCopyright of this.ownedCopyrights) {
-      const copyrights = await axios.get(
-        Settings.api_url + "creative_works/" + ownedCopyright.creative_work_id
+      const copyrights = await api.request(
+        "get",
+        "creative_works/" + ownedCopyright.creative_work_id
       );
       ownedCopyright.creative_work_name = copyrights.data.name;
     }

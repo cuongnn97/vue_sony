@@ -66,15 +66,11 @@ export default {
     };
   },
   methods: {
-    createPublisher() {
-      axios
-        .post(
-          Settings.api_url + "publishers",
-          JSON.stringify(this.formElements)
-        )
-        .then((response) => {
-          window.location.href = "/";
-        });
+    async createPublisher() {
+      await api.request("post", "publishers/", {
+        data: JSON.stringify(this.formElements),
+      });
+      window.location.href = "/";
     },
   },
   components: {

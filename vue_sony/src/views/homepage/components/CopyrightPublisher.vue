@@ -33,6 +33,8 @@
 import axios from "axios";
 import CopyrightList from "./CopyrightList";
 import Settings from "../../../constants/Settings.js";
+import SercueStorageApi from "../../../constants/SercueStorageApi.js";
+const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -41,9 +43,9 @@ export default {
     };
   },
   async created() {
-    const publishers = await axios.get(
-      Settings.api_url +
-        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/publishers"
+    const publishers = await api.request(
+      "get",
+      "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/publishers"
     );
     this.publishers = publishers.data;
   },

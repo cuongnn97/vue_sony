@@ -149,7 +149,9 @@ import Footer from "../Footer";
 import Categories from "../../constants/Categories.js";
 import Settings from "../../constants/Settings.js";
 import DateUtility from "../../constants/DateUtility.js";
+import SercueStorageApi from "../../constants/SercueStorageApi.js";
 import axios from "axios";
+const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -173,17 +175,20 @@ export default {
       copyrightCategories: Categories.COPYRIGHTCATEGORIES,
       errorMessage: "",
       aws_url: Settings.aws_url,
-      imageSrc: ''
+      imageSrc: "",
     };
   },
   async created() {
-    const creative_work = await axios.get(
-      Settings.api_url + "creative_works/" + this.$route.query.creative_work_id
+    const creative_work = await api.request(
+      "get",
+      "creative_works/" + this.$route.query.creative_work_id
     );
     this.creativeWorkFromDb = creative_work.data;
-    this.imageSrc = Settings.aws_url + this.creativeWorkFromDb.art_work_file_path
-    const user = await axios.get(
-      Settings.api_url + "users/" + this.creativeWorkFromDb.creator_ids
+    this.imageSrc =
+      Settings.aws_url + this.creativeWorkFromDb.art_work_file_path;
+    const user = await api.request(
+      "get",
+      "users/" + this.creativeWorkFromDb.creator_ids
     );
     this.creativeWorkFromDb.user_name = user.data.name;
     this.creativeWorkFromDb.release_date = DateUtility.StringToDate(
@@ -207,28 +212,26 @@ export default {
         this.formElements.copyright_categories.push(id);
       }
     },
-    createContracts() {
+    async createContracts() {
       this.formElements.creator_id = this.$route.query.owner_id;
       this.formElements.assignor_ids = this.creativeWorkFromDb.creator_ids;
       this.formElements.creative_work_id = this.$route.query.creative_work_id;
-      this.formElements.start_date = this.formElements.start_date.replaceAll(
-        "-",
-        ""
+      this.formElements.start_date = DateUtility.DateToString(
+        this.formElements.start_date
       );
-      this.formElements.end_date = this.formElements.end_date.replaceAll(
-        "-",
-        ""
+      this.formElements.end_date = DateUtility.DateToString(
+        this.formElements.end_date
       );
-      axios
-        .post(Settings.api_url + "contracts", JSON.stringify(this.formElements))
-        .then((response) => {
-          window.location.href = "/";
+      await api
+        .request("post", "contracts/", {
+          data: JSON.stringify(this.formElements),
         })
         .catch((error) => {
           if (error.response !== undefined) {
             this.errorMessage = error.response.data.message;
           }
         });
+      window.location.href = "/";
     },
   },
   components: {

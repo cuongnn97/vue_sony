@@ -108,10 +108,7 @@
               id="input-text"
               type="file"
             />
-            <img
-              :src="imageSrc"
-              alt="a"
-            />
+            <img :src="imageSrc" alt="a" />
           </div>
           <div class="fields">
             <label>著作物ファイル</label>
@@ -155,7 +152,9 @@ import Footer from "../Footer";
 import Categories from "../../constants/Categories.js";
 import Settings from "../../constants/Settings.js";
 import DateUtility from "../../constants/DateUtility.js";
+import SercueStorageApi from "../../constants/SercueStorageApi.js";
 import axios from "axios";
+const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -182,15 +181,17 @@ export default {
       subGenres: Categories.SUBGENRES,
       copyrightCategories: Categories.COPYRIGHTCATEGORIES,
       aws_url: Settings.aws_url,
-      imageSrc: ''
+      imageSrc: "",
     };
   },
   async created() {
-    const creative_work = await axios.get(
-      Settings.api_url + "creative_works/" + this.$route.query.creative_work_id
+    const creative_work = await api.request(
+      "get",
+      "creative_works/" + this.$route.query.creative_work_id
     );
     this.creativeWorkFromDb = creative_work.data;
-    this.imageSrc = Settings.aws_url + this.creativeWorkFromDb.art_work_file_path
+    this.imageSrc =
+      Settings.aws_url + this.creativeWorkFromDb.art_work_file_path;
     this.creatorId = this.creativeWorkFromDb.creator_ids[0];
     for (let i = 0; i < this.subGenres.length; i++) {
       if (
@@ -209,9 +210,9 @@ export default {
         this.creativeWorkFromDb.sale_start_date
       );
     }
-    const groups = await axios.get(
-      Settings.api_url +
-        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
+    const groups = await api.request(
+      "get",
+      "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
     );
     this.groups = groups.data;
   },
@@ -224,30 +225,26 @@ export default {
         }
       }
     },
-    editCreativeWork() {
+    async editCreativeWork() {
       this.formElements.creator_ids = this.creativeWorkFromDb.creator_ids;
       this.formElements.creative_work_name_kana = this.creativeWorkFromDb.name_kana;
       this.formElements.creative_work_name = this.creativeWorkFromDb.name;
       this.formElements.creative_work_genre = this.creativeWorkFromDb.genre;
       this.formElements.creative_work_sub_genre = this.creativeWorkFromDb.sub_genre;
-      this.formElements.release_date = this.creativeWorkFromDb.release_date.replaceAll(
-        "-",
-        ""
+      this.formElements.release_date = DateUtility.DateToString(
+        this.formElements.release_date
       );
-      this.formElements.sale_start_date = this.creativeWorkFromDb.sale_start_date.replaceAll(
-        "-",
-        ""
+      this.formElements.sale_start_date = DateUtility.DateToString(
+        this.formElements.sale_start_date
       );
-      axios
-        .patch(
-          Settings.api_url +
-            "creative_works/" +
-            this.$route.query.creative_work_id,
-          JSON.stringify(this.formElements)
-        )
-        .then((response) => {
-          window.location.href = "/";
-        });
+      await api.request(
+        "patch",
+        "creative_works/" + this.$route.query.creative_work_id,
+        {
+          data: JSON.stringify(this.formElements),
+        }
+      );
+      window.location.href = "/";
     },
   },
   components: {

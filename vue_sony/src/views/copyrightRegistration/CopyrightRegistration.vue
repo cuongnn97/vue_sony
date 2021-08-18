@@ -177,8 +177,11 @@ import Header from "../Header";
 import Footer from "../Footer";
 import Categories from "../../constants/Categories.js";
 import Settings from "../../constants/Settings.js";
+import DateUtility from "../../constants/DateUtility.js";
+import SercueStorageApi from "../../constants/SercueStorageApi.js";
 import axios from "axios";
 import AWS from "aws-sdk";
+const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -214,9 +217,9 @@ export default {
         this.copyrightCategories[i].id
       );
     }
-    const groups = await axios.get(
-      Settings.api_url +
-        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
+    const groups = await api.request(
+      "get",
+      "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
     );
     this.groups = groups.data;
   },
@@ -296,13 +299,11 @@ export default {
           }
         }
       }
-      this.formElements.release_date = this.formElements.release_date.replaceAll(
-        "-",
-        ""
+      this.formElements.release_date = DateUtility.DateToString(
+        this.formElements.release_date
       );
-      this.formElements.sale_start_date = this.formElements.sale_start_date.replaceAll(
-        "-",
-        ""
+      this.formElements.sale_start_date = DateUtility.DateToString(
+        this.formElements.sale_start_date
       );
       //UPLOAD FILE TO S3
       this.uploadFile(
@@ -316,20 +317,17 @@ export default {
         str.split(".")[0] + "/" + str.split("/")[1] + "/" + str.split("/")[2];
       return getString;
     },
-    createCreativeWorks() {
-      axios
-        .post(
-          Settings.api_url + "creative_works",
-          JSON.stringify(this.formElements)
-        )
-        .then((response) => {
-          window.location.href = "/";
+    async createCreativeWorks() {
+      await api
+        .request("post", "creative_works/", {
+          data: JSON.stringify(this.formElements),
         })
         .catch((error) => {
           if (error.response !== undefined) {
             this.errorMessage = error.response.data.message;
           }
         });
+      window.location.href = "/";
     },
   },
   components: {

@@ -9,6 +9,8 @@
 import axios from "axios";
 import CopyrightList from "./CopyrightList";
 import Settings from "../../../constants/Settings.js";
+import SercueStorageApi from "../../../constants/SercueStorageApi.js";
+const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -20,9 +22,9 @@ export default {
     };
   },
   async created() {
-    const copyrightsData = await axios.get(
-      Settings.api_url +
-        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/copyrights"
+    const copyrightsData = await api.request(
+      "get",
+      "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/copyrights"
     );
     for (const copyright of copyrightsData.data) {
       if (this.creativeWorkIds.indexOf(copyright.creative_work_id) === -1) {
@@ -30,9 +32,7 @@ export default {
       }
     }
     for (const creativeWork of this.creativeWorkIds) {
-      const copyrights = await axios.get(
-        Settings.api_url + "creative_works/" + creativeWork
-      );
+      const copyrights = api.request("get", "creative_works/" + creativeWork);
       this.ownedCopyrights.push(copyrights.data);
     }
   },

@@ -41,37 +41,35 @@
   </div>
 </template>
 <script>
-import Header from '../Header'
-import Footer from '../Footer'
-import Settings from '../../constants/Settings.js'
-import axios from 'axios'
+import Header from "../Header";
+import Footer from "../Footer";
+import Settings from "../../constants/Settings.js";
+import SercueStorageApi from "../../constants/SercueStorageApi.js";
+import axios from "axios";
+const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
       formElements: {
-        group_name: '',
-        group_name_kana: '',
-        user_id: 'user_id:40c95716-f9be-44db-98d2-bb7d67033716'
-      }
-    }
+        group_name: "",
+        group_name_kana: "",
+        user_id: "user_id:40c95716-f9be-44db-98d2-bb7d67033716",
+      },
+    };
   },
   methods: {
-    createGroups() {
-      axios
-        .post(
-          Settings.api_url + 'groups',
-          JSON.stringify(this.formElements)
-        )
-        .then(response => {
-          window.location.href = '/'
-        })
-    }
+    async createGroups() {
+      await api.request("post", "groups/", {
+        data: JSON.stringify(this.formElements),
+      });
+      window.location.href = "/";
+    },
   },
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 <style scoped>
 body {

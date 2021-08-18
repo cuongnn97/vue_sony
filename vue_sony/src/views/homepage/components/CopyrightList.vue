@@ -81,6 +81,8 @@
 <script>
 import axios from "axios";
 import Settings from "../../../constants/Settings.js";
+import SercueStorageApi from "../../../constants/SercueStorageApi.js";
+const api = new SercueStorageApi(Settings.api_url);
 export default {
   data() {
     return {
@@ -98,24 +100,32 @@ export default {
     },
   },
   async created() {
-    let url = "";
+    let copyrightsData = null;
     if (this.ownerId.startsWith("user_id")) {
-      url = Settings.api_url + "users/";
+      copyrightsData = await api.request(
+        "get",
+        "users/" + this.ownerId + "/copyrights"
+      );
     } else if (this.ownerId.startsWith("group_id")) {
-      url = Settings.api_url + "groups/";
+      copyrightsData = await api.request(
+        "get",
+        "groups/" + this.ownerId + "/copyrights"
+      );
     } else if (this.ownerId.startsWith("publisher_id")) {
-      url = Settings.api_url + "publishers/";
+      copyrightsData = await api.request(
+        "get",
+        "publishers/" + this.ownerId + "/copyrights"
+      );
     }
-    url += this.ownerId + "/copyrights";
-    const copyrightsData = await axios.get(url);
     for (const copyright of copyrightsData.data) {
       if (this.creativeWorkIds.indexOf(copyright.creative_work_id) === -1) {
         this.creativeWorkIds.push(copyright.creative_work_id);
       }
     }
     for (const creativeWork of this.creativeWorkIds) {
-      const copyrights = await axios.get(
-        Settings.api_url + "creative_works/" + creativeWork
+      const copyrights = await api.request(
+        "get",
+        "creative_works/" + creativeWork
       );
       this.ownedCopyrights.push(copyrights.data);
     }
