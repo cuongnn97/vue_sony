@@ -79,7 +79,6 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import Settings from "../../../settings/index.js";
 import SercueStorageApi from "../../../sercueStorageApi/index.js";
 export default {
@@ -148,20 +147,14 @@ export default {
         this.ownedCopyrightIds.push(id);
       }
     },
-    downloadOrchardFiles(creative_work_ids) {
+    async downloadOrchardFiles(creative_work_ids) {
       if (creative_work_ids !== "") {
-        axios
-          .post(Settings.api_url + "orchard", {
+        const s3_key = await SercueStorageApi.request("post", `orchard/`, {
+          data: {
             creative_work_ids: creative_work_ids,
-          })
-          .then((response) => {
-            window.open(Settings.aws_url + response.data.s3_key);
-          })
-          .catch((error) => {
-            if (error.response !== undefined) {
-              this.errorMessage = error.response.data.message;
-            }
-          });
+          },
+        });
+        window.open(Settings.aws_url + s3_key.data.s3_key);
       }
     },
   },

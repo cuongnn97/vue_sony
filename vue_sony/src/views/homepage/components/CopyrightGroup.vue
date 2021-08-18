@@ -28,7 +28,6 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import CopyrightList from "./CopyrightList";
 import Settings from "../../../settings/index.js";
 import SercueStorageApi from "../../../sercueStorageApi/index.js";

@@ -39,7 +39,6 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import Settings from "../../../settings/index.js";
 import SercueStorageApi from "../../../sercueStorageApi/index.js";
 export default {

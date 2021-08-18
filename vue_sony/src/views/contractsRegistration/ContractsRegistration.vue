@@ -150,7 +150,6 @@ import Categories from "../../constants/Categories.js";
 import Settings from "../../settings/index.js";
 import DateUtility from "../../utils/DateUtility.js";
 import SercueStorageApi from "../../sercueStorageApi/index.js";
-import axios from "axios";
 export default {
   data() {
     return {

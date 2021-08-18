@@ -54,7 +54,6 @@ import Header from "../Header";
 import Footer from "../Footer";
 import Settings from "../../settings/index.js";
 import SercueStorageApi from "../../sercueStorageApi/index.js";
-import axios from "axios";
 export default {
   data() {
     return {
