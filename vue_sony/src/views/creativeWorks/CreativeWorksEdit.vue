@@ -168,8 +168,6 @@ export default {
         creative_work_sub_genre: "",
         creative_work_art_work_file: null,
         creative_work_file: null,
-        release_date: "",
-        sale_start_date: "",
         copyright_categories: [],
       },
       creatorId: "",
@@ -230,12 +228,7 @@ export default {
       this.formElements.creative_work_name = this.creativeWorkFromDb.name;
       this.formElements.creative_work_genre = this.creativeWorkFromDb.genre;
       this.formElements.creative_work_sub_genre = this.creativeWorkFromDb.sub_genre;
-      this.formElements.release_date = DateUtility.DateToString(
-        this.formElements.release_date
-      );
-      this.formElements.sale_start_date = DateUtility.DateToString(
-        this.formElements.sale_start_date
-      );
+     
       await SercueStorageApi.request(
         "patch",
         `creative_works/${this.$route.query.creative_work_id}`,
