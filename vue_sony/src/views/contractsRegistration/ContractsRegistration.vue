@@ -136,7 +136,7 @@
         </div>
         <div class="image-content">
           <label>アートワーク</label>
-          <img :src="aws_url + creativeWorkFromDb.art_work_file_path" alt="a" />
+          <img :src="imageSrc" alt="a" />
         </div>
       </div>
       <Footer />
@@ -173,6 +173,7 @@ export default {
       copyrightCategories: Categories.COPYRIGHTCATEGORIES,
       errorMessage: "",
       aws_url: Settings.aws_url,
+      imageSrc: ''
     };
   },
   async created() {
@@ -180,6 +181,7 @@ export default {
       Settings.api_url + "creative_works/" + this.$route.query.creative_work_id
     );
     this.creativeWorkFromDb = creative_work.data;
+    this.imageSrc = Settings.aws_url + this.creativeWorkFromDb.art_work_file_path
     const user = await axios.get(
       Settings.api_url + "users/" + this.creativeWorkFromDb.creator_ids
     );
