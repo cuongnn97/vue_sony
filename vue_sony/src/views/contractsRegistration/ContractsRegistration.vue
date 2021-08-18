@@ -93,7 +93,6 @@
                 @change="addCategory(copyrightCategory.id)"
                 class="checkbox-input"
                 type="checkbox"
-                disabled
               />
               <span>{{ copyrightCategory.name }}</span>
             </div>
@@ -137,13 +136,7 @@
         </div>
         <div class="image-content">
           <label>アートワーク</label>
-          <img
-            :src="
-              aws_url +
-                creativeWorkFromDb.art_work_file_path
-            "
-            alt="a"
-          />
+          <img :src="aws_url + creativeWorkFromDb.art_work_file_path" alt="a" />
         </div>
       </div>
       <Footer />
@@ -151,125 +144,96 @@
   </div>
 </template>
 <script>
-import Header from '../Header'
-import Footer from '../Footer'
-import Categories from '../../constants/Categories.js'
-import Settings from '../../constants/Settings.js'
-import axios from 'axios'
+import Header from "../Header";
+import Footer from "../Footer";
+import Categories from "../../constants/Categories.js";
+import Settings from "../../constants/Settings.js";
+import DateUtility from "../../constants/DateUtility.js";
+import axios from "axios";
 export default {
   data() {
     return {
       contracts: [
-        { id: false, value: '無' },
-        { id: true, value: '有' }
+        { id: false, value: "無" },
+        { id: true, value: "有" },
       ],
       creativeWorkFromDb: [],
       formElements: {
-        creator_id: '',
-        assignor_ids: '',
-        assignee_ids: '',
-        creative_work_id: '',
-        start_date: '',
-        end_date: '',
+        creator_id: "",
+        assignor_ids: "",
+        assignee_ids: "",
+        creative_work_id: "",
+        start_date: "",
+        end_date: "",
         auto_renewal: true,
-        copyright_categories: []
+        copyright_categories: [],
       },
       genres: Categories.GENRES,
       subGenres: Categories.SUBGENRES,
       copyrightCategories: Categories.COPYRIGHTCATEGORIES,
-      errorMessage: '',
+      errorMessage: "",
       aws_url: Settings.aws_url,
-    }
+    };
   },
-  created() {
-    axios
-      .get(
-        Settings.api_url + 'creative_works/' +
-          this.$route.query.creative_work_id
-      )
-      .then(response => {
-        this.creativeWorkFromDb = response.data
-        axios
-          .get(
-            Settings.api_url + 'users/' +
-              this.creativeWorkFromDb.creator_ids
-          )
-          .then(response => {
-            this.creativeWorkFromDb.user_name = response.data.name
-          })
-        if (this.creativeWorkFromDb.release_date !== null) {
-          this.creativeWorkFromDb.release_date =
-            this.creativeWorkFromDb.release_date.substring(0, 4) +
-            '/' +
-            this.creativeWorkFromDb.release_date.substring(
-              4,
-              this.creativeWorkFromDb.release_date.length
-            )
-          this.creativeWorkFromDb.release_date =
-            this.creativeWorkFromDb.release_date.substring(0, 7) +
-            '/' +
-            this.creativeWorkFromDb.release_date.substring(
-              7,
-              this.creativeWorkFromDb.release_date.length
-            )
-        }
-        if (this.creativeWorkFromDb.sale_start_date !== null) {
-          this.creativeWorkFromDb.sale_start_date =
-            this.creativeWorkFromDb.sale_start_date.substring(0, 4) +
-            '/' +
-            this.creativeWorkFromDb.sale_start_date.substring(
-              4,
-              this.creativeWorkFromDb.sale_start_date.length
-            )
-          this.creativeWorkFromDb.sale_start_date =
-            this.creativeWorkFromDb.sale_start_date.substring(0, 7) +
-            '/' +
-            this.creativeWorkFromDb.sale_start_date.substring(
-              7,
-              this.creativeWorkFromDb.sale_start_date.length
-            )
-        }
-      })
+  async created() {
+    const creative_work = await axios.get(
+      Settings.api_url + "creative_works/" + this.$route.query.creative_work_id
+    );
+    this.creativeWorkFromDb = creative_work.data;
+    const user = await axios.get(
+      Settings.api_url + "users/" + this.creativeWorkFromDb.creator_ids
+    );
+    this.creativeWorkFromDb.user_name = user.data.name;
+    this.creativeWorkFromDb.release_date = DateUtility.StringToDate(
+      this.creativeWorkFromDb.release_date
+    );
+    this.creativeWorkFromDb.sale_start_date = DateUtility.StringToDate(
+      this.creativeWorkFromDb.sale_start_date
+    );
     for (let i = 0; i < this.copyrightCategories.length; i++) {
       this.formElements.copyright_categories.push(
         this.copyrightCategories[i].id
-      )
+      );
     }
   },
   methods: {
+    addCategory(id) {
+      const index = this.formElements.copyright_categories.indexOf(id);
+      if (index > -1) {
+        this.formElements.copyright_categories.splice(index, 1);
+      } else {
+        this.formElements.copyright_categories.push(id);
+      }
+    },
     createContracts() {
-      this.formElements.creator_id = this.$route.query.owner_id
-      this.formElements.assignor_ids = this.creativeWorkFromDb.creator_ids
-      this.formElements.creative_work_id = this.$route.query.creative_work_id
-      this.formElements.copyright_categories = this.creativeWorkFromDb.copyright_categories
+      this.formElements.creator_id = this.$route.query.owner_id;
+      this.formElements.assignor_ids = this.creativeWorkFromDb.creator_ids;
+      this.formElements.creative_work_id = this.$route.query.creative_work_id;
       this.formElements.start_date = this.formElements.start_date.replaceAll(
-        '-',
-        ''
-      )
+        "-",
+        ""
+      );
       this.formElements.end_date = this.formElements.end_date.replaceAll(
-        '-',
-        ''
-      )
+        "-",
+        ""
+      );
       axios
-        .post(
-         Settings.api_url + 'contracts',
-          JSON.stringify(this.formElements)
-        )
-        .then(response => {
-          window.location.href = '/'
+        .post(Settings.api_url + "contracts", JSON.stringify(this.formElements))
+        .then((response) => {
+          window.location.href = "/";
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response !== undefined) {
-            this.errorMessage = error.response.data.message
+            this.errorMessage = error.response.data.message;
           }
-        })
-    }
+        });
+    },
   },
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 <style scoped>
 body {
@@ -365,7 +329,7 @@ body {
 .fields .range-date {
   display: flex;
   align-items: center;
-  justify-content: space-between
+  justify-content: space-between;
 }
 .checkbox-field {
   width: 40%;

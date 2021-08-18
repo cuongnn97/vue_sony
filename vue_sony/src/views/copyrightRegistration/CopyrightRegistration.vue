@@ -173,175 +173,170 @@
   </div>
 </template>
 <script>
-import Header from '../Header'
-import Footer from '../Footer'
-import Categories from '../../constants/Categories.js'
-import Settings from '../../constants/Settings.js'
-import axios from 'axios'
-import AWS from 'aws-sdk'
+import Header from "../Header";
+import Footer from "../Footer";
+import Categories from "../../constants/Categories.js";
+import Settings from "../../constants/Settings.js";
+import axios from "axios";
+import AWS from "aws-sdk";
 export default {
   data() {
     return {
       users: [
-        { id: 'user_id:40c95716-f9be-44db-98d2-bb7d67033716', name: 'cuong' }
+        { id: "user_id:40c95716-f9be-44db-98d2-bb7d67033716", name: "cuong" },
       ],
       groups: [],
       pickedSubgenres: [],
-      coAuthors: [{ id: '', displayFlag: false }],
+      coAuthors: [{ id: "", displayFlag: false }],
       formElements: {
         creator_ids: [],
-        creative_work_name_kana: '',
-        creative_work_name: '',
-        creative_work_genre: '',
-        creative_work_sub_genre: '',
-        creative_work_art_work_file: '',
-        creative_work_file: '',
-        release_date: '',
-        sale_start_date: '',
-        copyright_categories: []
+        creative_work_name_kana: "",
+        creative_work_name: "",
+        creative_work_genre: "",
+        creative_work_sub_genre: "",
+        creative_work_art_work_file: "",
+        creative_work_file: "",
+        release_date: "",
+        sale_start_date: "",
+        copyright_categories: [],
       },
       creative_work_file: null,
       creative_work_art_work_file: null,
-      errorMessage: '',
+      errorMessage: "",
       genres: Categories.GENRES,
       subGenres: Categories.SUBGENRES,
-      copyrightCategories: Categories.COPYRIGHTCATEGORIES
-    }
+      copyrightCategories: Categories.COPYRIGHTCATEGORIES,
+    };
   },
-  created() {
+  async created() {
     for (let i = 0; i < this.copyrightCategories.length; i++) {
       this.formElements.copyright_categories.push(
         this.copyrightCategories[i].id
-      )
+      );
     }
-    axios
-      .get(
-        Settings.api_url + 'users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups'
-      )
-      .then(response => {
-        this.groups = response.data
-      })
+    const groups = await axios.get(
+      Settings.api_url +
+        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
+    );
+    this.groups = groups.data;
   },
   methods: {
     onChangeGenre(event) {
-      this.pickedSubgenres = []
+      this.pickedSubgenres = [];
       for (let i = 0; i < this.subGenres.length; i++) {
         if (this.subGenres[i].genres.toString() === event.target.value) {
-          this.pickedSubgenres.push(this.subGenres[i])
+          this.pickedSubgenres.push(this.subGenres[i]);
         }
       }
     },
     onFileChange(event, fileName) {
-      var files = event.target.files || event.dataTransfer.files
-      if (!files.length) return
-      if (fileName === 'artworkFile') {
-        this.creative_work_art_work_file = files[0]
-      } else if (fileName === 'copyrightFile') {
-        this.creative_work_file = files[0]
+      var files = event.target.files || event.dataTransfer.files;
+      if (!files.length) return;
+      if (fileName === "artworkFile") {
+        this.creative_work_art_work_file = files[0];
+      } else if (fileName === "copyrightFile") {
+        this.creative_work_file = files[0];
       }
     },
     addCategory(id) {
-      const index = this.formElements.copyright_categories.indexOf(id)
+      const index = this.formElements.copyright_categories.indexOf(id);
       if (index > -1) {
-        this.formElements.copyright_categories.splice(index, 1)
+        this.formElements.copyright_categories.splice(index, 1);
       } else {
-        this.formElements.copyright_categories.push(id)
+        this.formElements.copyright_categories.push(id);
       }
     },
     addCoauthor() {
-      this.coAuthors.push({ id: '', displayFlag: true })
+      this.coAuthors.push({ id: "", displayFlag: true });
     },
     deleteCoauthor(i) {
-      this.coAuthors.splice(i, 1)
+      this.coAuthors.splice(i, 1);
     },
     uploadFile(file, type) {
-      var fileName = file.name
-      var albumPhotosKey = 'creative_works/'
+      var fileName = file.name;
+      var albumPhotosKey = "creative_works/";
 
-      var photoKey = albumPhotosKey + fileName
+      var photoKey = albumPhotosKey + fileName;
 
-      // Use S3 ManagedUpload class as it supports multipart uploads
-      AWS.config.region = 'ap-northeast-1'
+      AWS.config.region = "ap-northeast-1";
       AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'ap-northeast-1:f9f79180-8602-4034-a400-8db839a07c45'
-      })
+        IdentityPoolId: "ap-northeast-1:f9f79180-8602-4034-a400-8db839a07c45",
+      });
       var upload = new AWS.S3.ManagedUpload({
         params: {
-          Bucket: 'bc-secure-storage-api-cuongnn-bucket83908e77-nczm2ffo15wh',
+          Bucket: "bc-secure-storage-api-cuongnn-bucket83908e77-nczm2ffo15wh",
           Key: photoKey,
-          Body: file
-        }
-      })
-
+          Body: file,
+        },
+      });
       upload
         .promise()
-        .then(data => {
-          if (type == 'creative_work_file') {
+        .then((data) => {
+          if (type == "creative_work_file") {
             this.formElements.creative_work_file = this.formatkey(
-              data.Location.replaceAll('https://', '')
-            )
-            this.createCreativeWorks()
-          } else if (type == 'creative_work_art_work_file') {
+              data.Location.replaceAll("https://", "")
+            );
+            this.createCreativeWorks();
+          } else if (type == "creative_work_art_work_file") {
             this.formElements.creative_work_art_work_file = this.formatkey(
-              data.Location.replaceAll('https://', '')
-            )
+              data.Location.replaceAll("https://", "")
+            );
           }
         })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     register() {
       this.formElements.creator_ids.length = 1;
       if (this.coAuthors.length > 0) {
         for (let i = 0; i < this.coAuthors.length; i++) {
-          if (this.coAuthors[i].id !== '') {
-            this.formElements.creator_ids.push(this.coAuthors[i].id)
+          if (this.coAuthors[i].id !== "") {
+            this.formElements.creator_ids.push(this.coAuthors[i].id);
           }
         }
       }
       this.formElements.release_date = this.formElements.release_date.replaceAll(
-        '-',
-        ''
-      )
+        "-",
+        ""
+      );
       this.formElements.sale_start_date = this.formElements.sale_start_date.replaceAll(
-        '-',
-        ''
-      )
+        "-",
+        ""
+      );
       //UPLOAD FILE TO S3
       this.uploadFile(
         this.creative_work_art_work_file,
-        'creative_work_art_work_file'
-      )
-      this.uploadFile(this.creative_work_file, 'creative_work_file')
+        "creative_work_art_work_file"
+      );
+      this.uploadFile(this.creative_work_file, "creative_work_file");
     },
     formatkey(str) {
       var getString =
-        str.split('.')[0] + '/' + str.split('/')[1] + '/' + str.split('/')[2]
-      return getString
+        str.split(".")[0] + "/" + str.split("/")[1] + "/" + str.split("/")[2];
+      return getString;
     },
     createCreativeWorks() {
-      console.log(JSON.stringify(this.formElements))
       axios
         .post(
-          Settings.api_url + 'creative_works',
+          Settings.api_url + "creative_works",
           JSON.stringify(this.formElements)
         )
-        .then(response => {
-          console.log(response)
+        .then((response) => {
+          window.location.href = "/";
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response !== undefined) {
-            this.errorMessage = error.response.data.message
+            this.errorMessage = error.response.data.message;
           }
-        })
-    }
+        });
+    },
   },
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 <style scoped>
 body {
@@ -388,13 +383,13 @@ body {
   text-align: left;
   margin-bottom: 0.5rem;
 }
-input[id*='input-text'] {
+input[id*="input-text"] {
   width: 100%;
   padding: 10px 6px;
   border: 1px solid #dedede;
   border-radius: 3px;
 }
-input[id*='input-text-coauthor'] {
+input[id*="input-text-coauthor"] {
   width: 50%;
   margin-bottom: 1rem;
   padding: 10px 6px;
@@ -402,7 +397,7 @@ input[id*='input-text-coauthor'] {
   border-radius: 3px;
   float: left;
 }
-input[id*='input-button'] {
+input[id*="input-button"] {
   float: left;
   padding: 11px 18px;
   margin-left: 0.5rem;
@@ -413,7 +408,7 @@ input[id*='input-button'] {
   color: #00000099;
   cursor: pointer;
 }
-input[id*='input-button-delete'] {
+input[id*="input-button-delete"] {
   float: left;
   padding: 11px 18px;
   margin-left: 0.5rem;

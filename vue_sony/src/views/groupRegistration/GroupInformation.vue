@@ -11,15 +11,15 @@
             <tbody>
               <tr>
                 <td>グループ名フリガナ</td>
-                <td>{{groupFromDb.name_kana}}</td>
+                <td>{{ groupFromDb.name_kana }}</td>
               </tr>
               <tr>
                 <td>グループ名</td>
-                <td>{{groupFromDb.name}}</td>
+                <td>{{ groupFromDb.name }}</td>
               </tr>
               <tr>
                 <td>ID</td>
-                <td>{{$route.query.group_id}}</td>
+                <td>{{ $route.query.group_id }}</td>
               </tr>
               <tr>
                 <td>グループメンバー</td>
@@ -55,35 +55,31 @@
   </div>
 </template>
 <script>
-import Header from '../Header'
-import Footer from '../Footer'
-import Settings from '../../constants/Settings.js'
-import axios from 'axios'
+import Header from "../Header";
+import Footer from "../Footer";
+import Settings from "../../constants/Settings.js";
+import axios from "axios";
 export default {
   data() {
     return {
       formElements: {
-        group_name: '',
-        group_name_kana: ''
+        group_name: "",
+        group_name_kana: "",
       },
-      groupFromDb: []
-    }
+      groupFromDb: [],
+    };
   },
-  created() {
-    axios
-      .get(
-        Settings.api_url + 'groups/' +
-          this.$route.query.group_id
-      )
-      .then(response => {
-        this.groupFromDb = response.data
-      })
+  async created() {
+    const groups = await axios.get(
+      Settings.api_url + "groups/" + this.$route.query.group_id
+    );
+    this.groupFromDb = groups.data;
   },
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 <style scoped>
 body {

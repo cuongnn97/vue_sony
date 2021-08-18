@@ -39,34 +39,28 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
-import Settings from '../../../constants/Settings.js'
+import axios from "axios";
+import Settings from "../../../constants/Settings.js";
 export default {
   data() {
     return {
-      ownedCopyrights: []
+      ownedCopyrights: [],
+    };
+  },
+  async created() {
+    const copyrights = await axios.get(
+      Settings.api_url +
+        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/contracts"
+    );
+    this.ownedCopyrights = copyrights.data;
+    for (const ownedCopyright of this.ownedCopyrights) {
+      const copyrights = await axios.get(
+        Settings.api_url + "creative_works/" + ownedCopyright.creative_work_id
+      );
+      ownedCopyright.creative_work_name = copyrights.data.name;
     }
   },
-  created() {
-    axios
-      .get(
-        Settings.api_url + 'users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/contracts'
-      )
-      .then(response => {
-        this.ownedCopyrights = response.data
-        for (const ownedCopyright of this.ownedCopyrights) {
-          axios
-            .get(
-              Settings.api_url + 'creative_works/' +
-                ownedCopyright.creative_work_id
-            )
-            .then(response => {
-              ownedCopyright.creative_work_name = response.data.name
-            })
-        }
-      })
-  }
-}
+};
 </script>
 <style scoped>
 body {

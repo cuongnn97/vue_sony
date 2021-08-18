@@ -4,45 +4,45 @@
     <div class="main-content">
       <div class="container">
         <div class="content">
-            <h1>
-              出版社登録
-            </h1>
-            <div class="fields">
-              <label>出版社名フリガナ</label>
-              <input
-                name="publisher[name_kana]"
-                v-model="formElements.publisher_name_kana"
-                class="input-text"
-                type="text"
-              />
-            </div>
-            <div class="fields">
-              <label>出版社名</label>
-              <input
-                name="publisher[name]"
-                v-model="formElements.publisher_name"
-                class="input-text"
-                type="text"
-              />
-            </div>
-            <div class="fields">
-              <label>JASRAC会員 ID</label>
-              <input
-                name="publisher[jasrac_member_id]"
-                v-model="formElements.jasrac_member_id"
-                class="input-text"
-                type="text"
-              />
-            </div>
-            <div class="action-form">
-              <a class="cancel-button" href="/">キャンセル</a>
-              <input
-                type="submit"
-                value="出版社登録"
-                class="ui primary button"
-                @click="createPublisher"
-              />
-            </div>
+          <h1>
+            出版社登録
+          </h1>
+          <div class="fields">
+            <label>出版社名フリガナ</label>
+            <input
+              name="publisher[name_kana]"
+              v-model="formElements.publisher_name_kana"
+              class="input-text"
+              type="text"
+            />
+          </div>
+          <div class="fields">
+            <label>出版社名</label>
+            <input
+              name="publisher[name]"
+              v-model="formElements.publisher_name"
+              class="input-text"
+              type="text"
+            />
+          </div>
+          <div class="fields">
+            <label>JASRAC会員 ID</label>
+            <input
+              name="publisher[jasrac_member_id]"
+              v-model="formElements.jasrac_member_id"
+              class="input-text"
+              type="text"
+            />
+          </div>
+          <div class="action-form">
+            <a class="cancel-button" href="/">キャンセル</a>
+            <input
+              type="submit"
+              value="出版社登録"
+              class="ui primary button"
+              @click="createPublisher"
+            />
+          </div>
         </div>
       </div>
       <Footer />
@@ -50,41 +50,40 @@
   </div>
 </template>
 <script>
-import Header from '../Header'
-import Footer from '../Footer'
-import Settings from '../../constants/Settings.js'
-import axios from 'axios'
+import Header from "../Header";
+import Footer from "../Footer";
+import Settings from "../../constants/Settings.js";
+import axios from "axios";
 export default {
   data() {
     return {
       formElements: {
-        publisher_name_kana: '',
-        publisher_name: '',
-        jasrac_member_id: '',
-        user_id: 'user_id:40c95716-f9be-44db-98d2-bb7d67033716'
-      }
-    }
+        publisher_name_kana: "",
+        publisher_name: "",
+        jasrac_member_id: "",
+        user_id: "user_id:40c95716-f9be-44db-98d2-bb7d67033716",
+      },
+    };
   },
   methods: {
     createPublisher() {
       axios
         .post(
-          Settings.api_url + 'publishers',
+          Settings.api_url + "publishers",
           JSON.stringify(this.formElements)
         )
-        .then(response => {
-          window.location.href = '/'
-        })
-    }
+        .then((response) => {
+          window.location.href = "/";
+        });
+    },
   },
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 <style scoped>
-
 body {
   font-family: sans-serif;
 }

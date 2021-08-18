@@ -50,52 +50,47 @@
   </div>
 </template>
 <script>
-import Header from '../Header'
-import Footer from '../Footer'
-import Settings from '../../constants/Settings.js'
-import axios from 'axios'
+import Header from "../Header";
+import Footer from "../Footer";
+import Settings from "../../constants/Settings.js";
+import axios from "axios";
 export default {
   data() {
     return {
       formElements: {
-        publisher_name: '',
-        publisher_name_kana: '',
-        jasrac_member_id: ''
+        publisher_name: "",
+        publisher_name_kana: "",
+        jasrac_member_id: "",
       },
-      publisherFromDb: []
-    } 
+      publisherFromDb: [],
+    };
   },
-  created() {
-    axios
-      .get(
-        Settings.api_url + 'publishers/' +
-          this.$route.query.publisher_id
-      )
-      .then(response => {
-        this.publisherFromDb = response.data
-      })
+  async created() {
+    const publishers = await axios.get(
+      Settings.api_url + "publishers/" + this.$route.query.publisher_id
+    );
+    this.publisherFromDb = publishers.data;
   },
   methods: {
     editGroup() {
-      this.formElements.publisher_name = this.publisherFromDb.name
-      this.formElements.publisher_name_kana = this.publisherFromDb.name_kana
-      this.formElements.jasrac_member_id = this.publisherFromDb.jasrac_member_id
+      this.formElements.publisher_name = this.publisherFromDb.name;
+      this.formElements.publisher_name_kana = this.publisherFromDb.name_kana;
+      this.formElements.jasrac_member_id = this.publisherFromDb.jasrac_member_id;
       axios
         .patch(
-          Settings.api_url + 'publishers/' +
-            this.$route.query.publisher_id,
+          Settings.api_url + "publishers/" + this.$route.query.publisher_id,
           JSON.stringify(this.formElements)
         )
-        .then(response => {
-          window.location.href = '/'
-        })
-    }
+        .then((response) => {
+          window.location.href = "/";
+        });
+    },
   },
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 <style scoped>
 body {

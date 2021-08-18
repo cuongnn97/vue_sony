@@ -6,9 +6,9 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
-import CopyrightList from './CopyrightList'
-import Settings from '../../../constants/Settings.js'
+import axios from "axios";
+import CopyrightList from "./CopyrightList";
+import Settings from "../../../constants/Settings.js";
 export default {
   data() {
     return {
@@ -16,38 +16,31 @@ export default {
       allSelected: false,
       ownedCopyrightIds: [],
       ownedCopyrights: [],
-      creativeWorkIds: []
-    }
+      creativeWorkIds: [],
+    };
   },
-  created() {
-    axios
-      .get(
-        Settings.api_url + 'users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/copyrights'
-      )
-      .then(response => {
-        let copyrightsData = response.data
-        for (const copyright of copyrightsData) {
-          if (this.creativeWorkIds.indexOf(copyright.creative_work_id) === -1) {
-            this.creativeWorkIds.push(copyright.creative_work_id)
-          }
-        }
-        for (const creativeWork of this.creativeWorkIds) {
-          axios
-            .get(
-              Settings.api_url + 'creative_works/' +
-                creativeWork
-            )
-            .then(response => {
-              this.ownedCopyrights.push(response.data)
-            })
-        }
-      })
+  async created() {
+    const copyrightsData = await axios.get(
+      Settings.api_url +
+        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/copyrights"
+    );
+    for (const copyright of copyrightsData.data) {
+      if (this.creativeWorkIds.indexOf(copyright.creative_work_id) === -1) {
+        this.creativeWorkIds.push(copyright.creative_work_id);
+      }
+    }
+    for (const creativeWork of this.creativeWorkIds) {
+      const copyrights = await axios.get(
+        Settings.api_url + "creative_works/" + creativeWork
+      );
+      this.ownedCopyrights.push(copyrights.data);
+    }
   },
   methods: {},
   components: {
-    CopyrightList
-  }
-}
+    CopyrightList,
+  },
+};
 </script>
 <style scoped>
 body {

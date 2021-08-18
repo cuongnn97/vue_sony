@@ -79,8 +79,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
-import Settings from '../../../constants/Settings.js'
+import axios from "axios";
+import Settings from "../../../constants/Settings.js";
 export default {
   data() {
     return {
@@ -88,85 +88,75 @@ export default {
       allSelected: false,
       ownedCopyrightIds: [],
       creativeWorkIds: [],
-      ownedCopyrights: []
-    }
+      ownedCopyrights: [],
+    };
   },
   props: {
     ownerId: {
       type: String,
-      required: false
-    }
+      required: false,
+    },
   },
-  created() {
-    let url = ''
-    if (this.ownerId.startsWith('user_id')) {
-      url =
-        Settings.api_url + 'users/'
-    } else if (this.ownerId.startsWith('group_id')) {
-      url =
-        Settings.api_url + 'groups/'
-    } else if (this.ownerId.startsWith('publisher_id')) {
-      url =
-        Settings.api_url + 'publishers/'
+  async created() {
+    let url = "";
+    if (this.ownerId.startsWith("user_id")) {
+      url = Settings.api_url + "users/";
+    } else if (this.ownerId.startsWith("group_id")) {
+      url = Settings.api_url + "groups/";
+    } else if (this.ownerId.startsWith("publisher_id")) {
+      url = Settings.api_url + "publishers/";
     }
-    url += this.ownerId + '/copyrights'
-    axios.get(url).then(response => {
-      let copyrightsData = response.data
-      for (const copyright of copyrightsData) {
-        if (this.creativeWorkIds.indexOf(copyright.creative_work_id) === -1) {
-          this.creativeWorkIds.push(copyright.creative_work_id)
-        }
+    url += this.ownerId + "/copyrights";
+    const copyrightsData = await axios.get(url);
+    for (const copyright of copyrightsData.data) {
+      if (this.creativeWorkIds.indexOf(copyright.creative_work_id) === -1) {
+        this.creativeWorkIds.push(copyright.creative_work_id);
       }
-      for (const creativeWork of this.creativeWorkIds) {
-        axios
-          .get(
-            Settings.api_url + 'creative_works/' +
-              creativeWork
-          )
-          .then(response => {
-            this.ownedCopyrights.push(response.data)
-          })
-      }
-    })
+    }
+    for (const creativeWork of this.creativeWorkIds) {
+      const copyrights = await axios.get(
+        Settings.api_url + "creative_works/" + creativeWork
+      );
+      this.ownedCopyrights.push(copyrights.data);
+    }
   },
 
   methods: {
     selectAll() {
-      this.ownedCopyrightIds = []
+      this.ownedCopyrightIds = [];
       if (!this.allSelected) {
         for (let i = 0; i < this.ownedCopyrights.length; i++) {
-          this.ownedCopyrightIds.push(this.ownedCopyrights[i].id)
+          this.ownedCopyrightIds.push(this.ownedCopyrights[i].id);
         }
       }
     },
     select(id) {
-      this.allSelected = false
-      const index = this.ownedCopyrightIds.indexOf(id)
+      this.allSelected = false;
+      const index = this.ownedCopyrightIds.indexOf(id);
       if (index > -1) {
-        this.ownedCopyrightIds.splice(index, 1)
+        this.ownedCopyrightIds.splice(index, 1);
       } else {
-        this.ownedCopyrightIds.push(id)
+        this.ownedCopyrightIds.push(id);
       }
     },
     downloadOrchardFiles(creative_work_ids) {
-      if (creative_work_ids !== '') {
+      if (creative_work_ids !== "") {
         axios
-          .post(
-            Settings.api_url + 'orchard',
-            {"creative_work_ids" : creative_work_ids}
-          )
-          .then(response => {
-            window.open(Settings.aws_url + response.data.s3_key)
+          .post(Settings.api_url + "orchard", {
+            creative_work_ids: creative_work_ids,
           })
-          .catch(error => {
+          .then((response) => {
+            window.open(Settings.aws_url + response.data.s3_key);
+          })
+          .catch((error) => {
             if (error.response !== undefined) {
-              this.errorMessage = error.response.data.message
+              this.errorMessage = error.response.data.message;
             }
-          })
+          });
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 <style scoped>
 body {

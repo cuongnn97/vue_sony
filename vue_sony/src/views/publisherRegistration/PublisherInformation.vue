@@ -47,31 +47,27 @@
   </div>
 </template>
 <script>
-import Header from '../Header'
-import Footer from '../Footer'
-import Settings from '../../constants/Settings.js'
-import axios from 'axios'
+import Header from "../Header";
+import Footer from "../Footer";
+import Settings from "../../constants/Settings.js";
+import axios from "axios";
 export default {
   data() {
     return {
-      publisherFromDb: []
-    }
+      publisherFromDb: [],
+    };
   },
-  created() {
-    axios
-      .get(
-        Settings.api_url + 'publishers/' +
-          this.$route.query.publisher_id
-      )
-      .then(response => {
-        this.publisherFromDb = response.data
-      })
+  async created() {
+    const publishers = await axios.get(
+      Settings.api_url + "publishers/" + this.$route.query.publisher_id
+    );
+    this.publisherFromDb = publishers.data;
   },
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 <style scoped>
 body {

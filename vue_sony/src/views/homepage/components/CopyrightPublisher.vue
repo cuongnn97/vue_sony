@@ -30,29 +30,27 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
-import CopyrightList from './CopyrightList'
-import Settings from '../../../constants/Settings.js'
+import axios from "axios";
+import CopyrightList from "./CopyrightList";
+import Settings from "../../../constants/Settings.js";
 export default {
   data() {
     return {
       publishers: [],
-      ownedCopyrights: []
-    }
+      ownedCopyrights: [],
+    };
   },
-  created() {
-    axios
-      .get(
-        Settings.api_url + 'users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/publishers'
-      )
-      .then(response => {
-        this.publishers = response.data
-      })
+  async created() {
+    const publishers = await axios.get(
+      Settings.api_url +
+        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/publishers"
+    );
+    this.publishers = publishers.data;
   },
   components: {
-    CopyrightList
-  }
-}
+    CopyrightList,
+  },
+};
 </script>
 <style scoped>
 body {

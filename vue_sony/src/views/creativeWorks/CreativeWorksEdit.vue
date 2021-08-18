@@ -109,7 +109,7 @@
               type="file"
             />
             <img
-              :src= "aws_url + creativeWorkFromDb.art_work_file_path"
+              :src="imageSrc"
               alt="a"
             />
           </div>
@@ -150,136 +150,111 @@
   </div>
 </template>
 <script>
-import Header from '../Header'
-import Footer from '../Footer'
-import Categories from '../../constants/Categories.js'
-import Settings from '../../constants/Settings.js'
-import axios from 'axios'
+import Header from "../Header";
+import Footer from "../Footer";
+import Categories from "../../constants/Categories.js";
+import Settings from "../../constants/Settings.js";
+import DateUtility from "../../constants/DateUtility.js";
+import axios from "axios";
 export default {
   data() {
     return {
       users: [
-        { id: 'user_id:40c95716-f9be-44db-98d2-bb7d67033716', name: 'cuong' }
+        { id: "user_id:40c95716-f9be-44db-98d2-bb7d67033716", name: "cuong" },
       ],
       formElements: {
         creator_ids: [],
-        creative_work_name_kana: '',
-        creative_work_name: '',
-        creative_work_genre: '',
-        creative_work_sub_genre: '',
+        creative_work_name_kana: "",
+        creative_work_name: "",
+        creative_work_genre: "",
+        creative_work_sub_genre: "",
         creative_work_art_work_file: null,
         creative_work_file: null,
-        release_date: '',
-        sale_start_date: '',
-        copyright_categories: []
+        release_date: "",
+        sale_start_date: "",
+        copyright_categories: [],
       },
-      creatorId: '',
+      creatorId: "",
       groups: [],
       creativeWorkFromDb: [],
       pickedSubgenres: [],
       genres: Categories.GENRES,
       subGenres: Categories.SUBGENRES,
       copyrightCategories: Categories.COPYRIGHTCATEGORIES,
-      aws_url: Settings.aws_url
-    }
+      aws_url: Settings.aws_url,
+      imageSrc: ''
+    };
   },
-  created() {
-    axios
-      .get(
-        Settings.api_url + 'creative_works/' +
-          this.$route.query.creative_work_id
-      )
-      .then(response => {
-        this.creativeWorkFromDb = response.data
-        this.creatorId = this.creativeWorkFromDb.creator_ids[0]
-        for (let i = 0; i < this.subGenres.length; i++) {
-          if (
-            this.subGenres[i].genres.toString() ===
-            this.creativeWorkFromDb.genre
-          ) {
-            this.pickedSubgenres.push(this.subGenres[i])
-          }
-        }
-        if (this.creativeWorkFromDb.release_date !== null) {
-          this.creativeWorkFromDb.release_date =
-            this.creativeWorkFromDb.release_date.substring(0, 4) +
-            '-' +
-            this.creativeWorkFromDb.release_date.substring(
-              4,
-              this.creativeWorkFromDb.release_date.length
-            )
-          this.creativeWorkFromDb.release_date =
-            this.creativeWorkFromDb.release_date.substring(0, 7) +
-            '-' +
-            this.creativeWorkFromDb.release_date.substring(
-              7,
-              this.creativeWorkFromDb.release_date.length
-            )
-        }
-        if (this.creativeWorkFromDb.sale_start_date !== null) {
-          this.creativeWorkFromDb.sale_start_date =
-            this.creativeWorkFromDb.sale_start_date.substring(0, 4) +
-            '-' +
-            this.creativeWorkFromDb.sale_start_date.substring(
-              4,
-              this.creativeWorkFromDb.sale_start_date.length
-            )
-          this.creativeWorkFromDb.sale_start_date =
-            this.creativeWorkFromDb.sale_start_date.substring(0, 7) +
-            '-' +
-            this.creativeWorkFromDb.sale_start_date.substring(
-              7,
-              this.creativeWorkFromDb.sale_start_date.length
-            )
-        }
-      })
-    axios
-      .get(
-        Settings.api_url + 'users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups'
-      )
-      .then(response => {
-        this.groups = response.data
-      })
+  async created() {
+    const creative_work = await axios.get(
+      Settings.api_url + "creative_works/" + this.$route.query.creative_work_id
+    );
+    this.creativeWorkFromDb = creative_work.data;
+    this.imageSrc = Settings.aws_url + this.creativeWorkFromDb.art_work_file_path
+    this.creatorId = this.creativeWorkFromDb.creator_ids[0];
+    for (let i = 0; i < this.subGenres.length; i++) {
+      if (
+        this.subGenres[i].genres.toString() === this.creativeWorkFromDb.genre
+      ) {
+        this.pickedSubgenres.push(this.subGenres[i]);
+      }
+    }
+    if (this.creativeWorkFromDb.release_date !== null) {
+      this.creativeWorkFromDb.release_date = DateUtility.StringToDate(
+        this.creativeWorkFromDb.release_date
+      );
+    }
+    if (this.creativeWorkFromDb.sale_start_date !== null) {
+      this.creativeWorkFromDb.sale_start_date = DateUtility.StringToDate(
+        this.creativeWorkFromDb.sale_start_date
+      );
+    }
+    const groups = await axios.get(
+      Settings.api_url +
+        "users/user_id:40c95716-f9be-44db-98d2-bb7d67033716/groups"
+    );
+    this.groups = groups.data;
   },
   methods: {
     onChangeGenre(event) {
-      this.pickedSubgenres = []
+      this.pickedSubgenres = [];
       for (let i = 0; i < this.subGenres.length; i++) {
         if (this.subGenres[i].genres.toString() === event.target.value) {
-          this.pickedSubgenres.push(this.subGenres[i])
+          this.pickedSubgenres.push(this.subGenres[i]);
         }
       }
     },
     editCreativeWork() {
-      this.formElements.creator_ids = this.creativeWorkFromDb.creator_ids
-      this.formElements.creative_work_name_kana = this.creativeWorkFromDb.name_kana
-      this.formElements.creative_work_name = this.creativeWorkFromDb.name
-      this.formElements.creative_work_genre = this.creativeWorkFromDb.genre
-      this.formElements.creative_work_sub_genre = this.creativeWorkFromDb.sub_genre
+      this.formElements.creator_ids = this.creativeWorkFromDb.creator_ids;
+      this.formElements.creative_work_name_kana = this.creativeWorkFromDb.name_kana;
+      this.formElements.creative_work_name = this.creativeWorkFromDb.name;
+      this.formElements.creative_work_genre = this.creativeWorkFromDb.genre;
+      this.formElements.creative_work_sub_genre = this.creativeWorkFromDb.sub_genre;
       this.formElements.release_date = this.creativeWorkFromDb.release_date.replaceAll(
-        '-',
-        ''
-      )
+        "-",
+        ""
+      );
       this.formElements.sale_start_date = this.creativeWorkFromDb.sale_start_date.replaceAll(
-        '-',
-        ''
-      )
+        "-",
+        ""
+      );
       axios
         .patch(
-          Settings.api_url + 'creative_works/' +
+          Settings.api_url +
+            "creative_works/" +
             this.$route.query.creative_work_id,
           JSON.stringify(this.formElements)
         )
-        .then(response => {
-          window.location.href = '/'
-        })
-    }
+        .then((response) => {
+          window.location.href = "/";
+        });
+    },
   },
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 <style scoped>
 body {
@@ -322,13 +297,13 @@ body {
   text-align: left;
   margin-bottom: 0.5rem;
 }
-input[id*='input-text'] {
+input[id*="input-text"] {
   width: 100%;
   padding: 10px 6px;
   border: 1px solid #dedede;
   border-radius: 3px;
 }
-input[id*='input-text-coauthor'] {
+input[id*="input-text-coauthor"] {
   width: 50%;
   margin-bottom: 1rem;
   padding: 10px 6px;
@@ -336,7 +311,7 @@ input[id*='input-text-coauthor'] {
   border-radius: 3px;
   float: left;
 }
-input[id*='input-button'] {
+input[id*="input-button"] {
   float: left;
   padding: 11px 18px;
   margin-left: 0.5rem;
@@ -347,7 +322,7 @@ input[id*='input-button'] {
   color: #00000099;
   cursor: pointer;
 }
-input[id*='input-button-delete'] {
+input[id*="input-button-delete"] {
   float: left;
   padding: 11px 18px;
   margin-left: 0.5rem;
