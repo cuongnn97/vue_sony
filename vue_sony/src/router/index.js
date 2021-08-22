@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Homepage from '../views/homepage/Homepage.vue'
 import Login from '../views/Login.vue'
+import Signup from '../views/Signup.vue'
 import CopyrightRegistration from '../views/copyrightRegistration/CopyrightRegistration.vue'
 import CreativeWorksEdit from '../views/creativeWorks/CreativeWorksEdit.vue'
 
@@ -23,6 +24,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/users/sign_up',
+    name: 'Signup',
+    component: Signup
   },
   {
     path: '/creative_works/new',

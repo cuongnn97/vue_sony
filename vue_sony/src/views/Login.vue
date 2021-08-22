@@ -67,7 +67,7 @@ export default {
   height: fit-content;
 }
 .container {
-  width: 60%;
+  width: 1127px;
   height: 100px;
   margin: 0 auto;
 }
@@ -133,5 +133,15 @@ input {
 .action input:hover {
   cursor: pointer;
   background-color: #babbbc;
+}
+@media screen and (max-width: 1199px) {
+  .container {
+    width: 933px;
+  }
+}
+@media screen and (max-width: 993px) {
+  .container {
+    width: 723px;
+  }
 }
 </style>

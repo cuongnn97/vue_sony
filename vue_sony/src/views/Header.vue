@@ -6,10 +6,10 @@
       </a>
     </div>
     <div v-show="rightMenu" class="right-menu">
-      <a class="item" href="/">
+      <a class="item" href="/login">
         cuong
       </a>
-      <a class="item" href="/">
+      <a class="item" href="/login">
         ログアウト
       </a>
     </div>
